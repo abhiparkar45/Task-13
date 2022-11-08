@@ -7,17 +7,17 @@
     "dialect": "mysql"
   },
   "test": {
-    "username": "postgres",
+    "username": "root",
     "password": "root",
     "database": "e_commerce",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "username": "postgres",
-    "password": "root",
-    "database": "e_commerce",
+    "username": "root",
+    "password": null,
+    "database": "database_production",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "mysql"
   }
 }

@@ -65,31 +65,28 @@ exports.getProducts = async (req, res, next) => {
 exports.uploadProductDocument = async (req, res, next) => {
     const docs = await req.files;
     const product_Id = await req.body.product_Id;
-    let success = true;
-    let results = [];
+    const results = [];
     for(let i = 0;i<docs.length;i++){
         const docName = docs[i].filename;
         const docType = docs[i].mimetype;
         const docURL = `http://ecommerce.com/uploads/${docs[i].path}`;
         const data = {product_Id,docName, docType, docURL};
-        const x  = await Documents.create(data);
-        console.log(`response:${x}`);
-        // if(response){
-        //     // console.log(`response:${response}`);
-        //     results.push(response);
-        // }
-        // else{
-        //     success = false;
-        //     break; 
-        // }
+        const response  = await Documents.create(data);
+        
+        if(response){
+            results.push(response.dataValues);
+        }
+        else{
+            res.status(400).json(failerResponse("Something went wrong while uploading documents !"));
+            break;
+        }
     }
-    console.log(`result:${results}`);
-    // if(!result){
-    //     return res.status(400).json(failerResponse("Something went wrong !"));
-    // }
-    // else{
-    //     return res.status(200).json(successResponse("Documents uploaded successfully !",result))
-    // }
+    if(results.length !== docs.length){
+        return res.status(400).json(failerResponse("Something went wrong while uploading documents!"));
+    }
+    else{
+        return res.status(200).json(successResponse("Documents uploaded successfully !",results))
+    }
 }
 exports.deleteProduct = async (req, res, next) => {
     const product_Id = await req.params.id;
