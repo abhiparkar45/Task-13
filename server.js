@@ -5,7 +5,7 @@ const db = require("./models/index");
 env.config({ path: "./config/config.env" });
 
 db.sequelize
-  .sync({ force: true })
+  .sync({ alter: true })
   .then(() => {
     console.log(`db synced !`);
   })

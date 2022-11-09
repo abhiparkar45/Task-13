@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "no action",
         onUpdate: "cascade",
       });
+      Users.belongsTo(models.Roles, {
+        foreignKey: "roleId",
+        onDelete: "no action",
+        onUpdate: "no action",
+      });
     }
   }
   Users.init(
@@ -57,10 +62,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      isAdmin: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: true,
+      roleId: {
+        type: DataTypes.TINYINT,
+        defaultValue: 2,
       },
     },
     {
@@ -71,8 +75,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Users.generateAuthToken = (id, isAdmin) => {
-    const token = jwt.sign({ id, isAdmin }, config.get("jwtPrivateKey"));
+  Users.generateAuthToken = (id, roleId) => {
+    const token = jwt.sign({ id, roleId }, config.get("jwtPrivateKey"));
     return token;
   };
   return Users;
