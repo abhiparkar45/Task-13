@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Users.hasMany(models.Orders, {
         foreignKey: "user_Id",
-        onDelete: "no action",
+        onDelete: "cascade",
         onUpdate: "cascade",
       });
       Users.belongsTo(models.Roles, {
@@ -65,6 +65,17 @@ module.exports = (sequelize, DataTypes) => {
       roleId: {
         type: DataTypes.TINYINT,
         defaultValue: 2,
+        allowNull: false,
+      },
+      otp: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
+      otp_generation_timestamp: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
       },
     },
     {

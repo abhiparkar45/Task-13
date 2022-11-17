@@ -11,13 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Orders.belongsTo(models.Products, {
         foreignKey: "product_Id",
-        onDelete: "no action",
-        onUpdate: "no action",
       });
       Orders.belongsTo(models.Users, {
         foreignKey: "user_Id",
-        onDelete: "no action",
-        onUpdate: "no action",
       });
     }
   }
@@ -36,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       user_Id: {
         type: DataTypes.INTEGER,
         allowNull: true,
+      },
+      productPrice: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
     },
     {

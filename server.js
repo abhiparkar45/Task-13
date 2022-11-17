@@ -1,11 +1,14 @@
 const app = require("./app");
 const env = require("dotenv");
 const db = require("./models/index");
+// const cluster = require("./utils/cluster");
+const { task } = require("./utils/cron");
+task.start();
 
 env.config({ path: "./config/config.env" });
 
 db.sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log(`db synced !`);
   })

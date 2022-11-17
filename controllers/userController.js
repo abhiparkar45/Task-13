@@ -3,6 +3,8 @@ const User = db.Users;
 const bcrypt = require("bcrypt");
 const failerResponse = require("../responseBuilder/failerResponse");
 const successResponse = require("../responseBuilder/successResponse");
+const sendMail = require("../utils/sendMail");
+const { deleteOTP } = require("../utils/cron");
 
 exports.createUser = async (req, res, next) => {
   try {
@@ -36,7 +38,6 @@ exports.createUser = async (req, res, next) => {
       phone: user.phone,
       password: hashedPass,
     };
-
     const result = await User.create(data);
     if (result) {
       return res
@@ -72,5 +73,63 @@ exports.authenticateUser = async (req, res, next) => {
     }
   } catch (err) {
     next(err);
+  }
+};
+exports.forgotPassword = async (req, res, next) => {
+  const email = await req.body.email;
+
+  var validRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+  const result = email.match(validRegex);
+
+  if (!result) {
+    return res.status(400).json(failerResponse("Invalid email"));
+  }
+  const userRegistered = await User.findOne({ where: { email } });
+  if (userRegistered) {
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    const saveOTP = await User.update(
+      {
+        firstName: userRegistered.firstName,
+        lastName: userRegistered.lastName,
+        username: userRegistered.username,
+        age: userRegistered.age,
+        email: userRegistered.email,
+        phone: userRegistered.phone,
+        password: userRegistered.password,
+        roleId: userRegistered.roleId,
+        otp: otp,
+        otp_generation_timestamp: new Date(),
+      },
+      { where: { email } }
+    );
+    if (saveOTP) {
+      const sent = await sendMail(email, "hello", `hello, your OTP is ${otp}`);
+      res.status(200).json(sent);
+    }
+  } else {
+    return res.status(404).json(failerResponse("Incorrect Email !"));
+  }
+};
+exports.verifyOTP = async (req, res, next) => {
+  const email = await req.body.email;
+  const otp = await req.body.otp;
+
+  const user = await User.findOne({ where: { email } });
+  if (user.otp == otp) {
+    return res
+      .status(200)
+      .json(successResponse("OTP matched succesfully !", user));
+  } else {
+    return res.status(400).json(failerResponse("Invalid OTP !"));
+  }
+};
+
+exports.getUsers = async (req, res, next) => {
+  try {
+    const users = await User.findAll();
+    res.status(200).json({ users });
+  } catch (err) {
+    return res.status(500).json({ message: err });
   }
 };
