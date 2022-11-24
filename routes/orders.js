@@ -4,4 +4,6 @@ const { createOrder } = require("../controllers/orderController");
 const auth = require("../middlewares/auth");
 const isAdmin = require("../middlewares/isAdmin");
 
-router.post("/order", auth, createOrder);
+router.post("/:id", auth, createOrder);
+
+module.exports = router;

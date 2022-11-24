@@ -12,16 +12,16 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    await queryInterface.bulkInsert("ec_roles", [
-      {
-        roleId: 1,
-        roleName: "Admin",
-      },
-      {
-        roleId: 2,
-        roleName: "Customer",
-      },
-    ]);
+    // await queryInterface.bulkInsert("ec_roles", [
+    //   {
+    //     roleId: 1,
+    //     roleName: "Admin",
+    //   },
+    //   {
+    //     roleId: 2,
+    //     roleName: "Customer",
+    //   },
+    // ]);
   },
 
   async down(queryInterface, Sequelize) {

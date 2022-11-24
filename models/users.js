@@ -2,6 +2,7 @@
 const { Model } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -11,15 +12,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Users.hasMany(models.Orders, {
-        foreignKey: "user_Id",
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      });
+      // Users.hasMany(models.Orders, {
+      //   foreignKey: "user_Id",
+      //   onDelete: "cascade",
+      //   onUpdate: "cascade",
+      // });
       Users.belongsTo(models.Roles, {
         foreignKey: "roleId",
-        onDelete: "no action",
-        onUpdate: "no action",
+        //   onDelete: "restrict",
+        //   onUpdate: "cascade",
+      });
+      Users.belongsToMany(models.Products, {
+        through: models.Orders,
+        // foreignKey: "user_Id",
+        // otherKey: "product_Id",
       });
     }
   }
@@ -45,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       age: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       email: {
@@ -63,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       roleId: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.INTEGER,
         defaultValue: 2,
         allowNull: false,
       },
@@ -77,6 +83,16 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null,
       },
+      verified_timestamp: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
+      },
+      user_IP: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null,
+      },
     },
     {
       sequelize,
@@ -87,7 +103,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Users.generateAuthToken = (id, roleId) => {
-    const token = jwt.sign({ id, roleId }, config.get("jwtPrivateKey"));
+    const token = jwt.sign({ id, roleId }, config.get("jwtPrivateKey"), {
+      expiresIn: "24h",
+    });
     return token;
   };
   return Users;

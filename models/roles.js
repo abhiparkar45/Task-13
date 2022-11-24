@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const { Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Roles extends Model {
     /**
@@ -20,12 +21,13 @@ module.exports = (sequelize, DataTypes) => {
     {
       roleId: {
         primaryKey: true,
-        type: DataTypes.TINYINT,
+        type: DataTypes.INTEGER,
         allowNull: false,
         autoIncrement: true,
       },
       roleName: {
         type: DataTypes.STRING,
+        allowNull: false,
       },
     },
     {
@@ -33,6 +35,21 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: false,
       modelName: "Roles",
       tableName: "ec_roles",
+      hooks: {
+        afterSync: async (sequelize) => {
+          const exist = await Roles.findAll({
+            where: {
+              [Op.or]: [{ roleName: "Admin" }, { roleName: "Customer" }],
+            },
+          });
+          if (exist.length == 0) {
+            await Roles.bulkCreate([
+              { roleId: 1, roleName: "Admin" },
+              { roleId: 2, roleName: "Customer" },
+            ]);
+          }
+        },
+      },
     }
   );
   return Roles;

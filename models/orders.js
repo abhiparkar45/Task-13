@@ -11,9 +11,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Orders.belongsTo(models.Products, {
         foreignKey: "product_Id",
+        onDelete: "set null",
+        onUpdate: "cascade",
       });
       Orders.belongsTo(models.Users, {
         foreignKey: "user_Id",
+        onDelete: "restrict",
+        onUpdate: "cascade",
       });
     }
   }

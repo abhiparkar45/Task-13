@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -11,20 +11,20 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
-    await queryInterface.bulkInsert('ec_images', [{
-      imageID: 1,
-      imgName: "1232434343.jpg",
-      imgURL: "something.com/image",
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }, {
-      imageID: 2,
-      imgName: "12346767434343.jpg",
-      imgURL: "something.com/image",
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }])
+     */
+    // await queryInterface.bulkInsert('ec_images', [{
+    //   imageID: 1,
+    //   imgName: "1232434343.jpg",
+    //   imgURL: "something.com/image",
+    //   createdAt: new Date(),
+    //   updatedAt: new Date()
+    // }, {
+    //   imageID: 2,
+    //   imgName: "12346767434343.jpg",
+    //   imgURL: "something.com/image",
+    //   createdAt: new Date(),
+    //   updatedAt: new Date()
+    // }])
   },
 
   async down(queryInterface, Sequelize) {
@@ -34,5 +34,5 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-  }
+  },
 };

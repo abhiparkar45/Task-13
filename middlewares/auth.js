@@ -1,6 +1,5 @@
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const successResponse = require("../responseBuilder/successResponse");
 const failerResponse = require("../responseBuilder/failerResponse");
 
 module.exports = async (req, res, next) => {

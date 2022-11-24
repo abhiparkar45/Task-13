@@ -21,21 +21,27 @@ module.exports = (sequelize, DataTypes) => {
       },
       err_name: {
         type: DataTypes.STRING,
+        defaultValue: null,
       },
       err_message: {
         type: DataTypes.STRING,
+        defaultValue: null,
       },
       err_type: {
         type: DataTypes.STRING,
+        defaultValue: null,
       },
       err_value: {
         type: DataTypes.STRING,
+        defaultValue: null,
       },
       sqlMessage: {
         type: DataTypes.STRING,
+        defaultValue: null,
       },
       sqlQuery: {
         type: DataTypes.STRING,
+        defaultValue: null,
       },
       createdAt: {
         allowNull: false,

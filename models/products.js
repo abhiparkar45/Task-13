@@ -11,23 +11,28 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Products.belongsTo(models.Images, {
         foreignKey: "category_Id",
-        onDelete: "set null",
-        onUpdate: "cascade",
+        // onDelete: "set null",
+        // onUpdate: "cascade",
       });
       Products.belongsTo(models.Categories, {
         foreignKey: "category_Id",
-        onDelete: "set null",
-        onUpdate: "cascade",
+        //   onDelete: "set null",
+        //   onUpdate: "cascade",
       });
       Products.hasMany(models.Documents, {
         foreignKey: "product_Id",
         onDelete: "cascade",
         onUpdate: "cascade",
       });
-      Products.hasMany(models.Orders, {
-        foreignKey: "product_Id",
-        onDelete: "no action",
-        onUpdate: "cascade",
+      // Products.hasMany(models.Orders, {
+      //   foreignKey: "product_Id",
+      //   onDelete: "no action",
+      //   onUpdate: "cascade",
+      // });
+      Products.belongsToMany(models.Users, {
+        through: models.Orders,
+        // foreignKey: "product_Id",
+        // otherKey: "user_Id",
       });
     }
   }

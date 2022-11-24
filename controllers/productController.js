@@ -10,19 +10,16 @@ const successResponse = require("../responseBuilder/successResponse");
 exports.uploadProductImage = async (req, res, next) => {
   try {
     const imgName = await req.file.filename;
-    const path = await req.file.path;
-    const imgURL = `http://ecommerce.com/uploads/${path}`;
+    const imgURL = `${process.env.BASE_URL}/${imgName}`;
     const data = {
       imgName: imgName,
       imgURL: imgURL,
     };
     const result = await Image.create(data);
-    if (result.dataValues) {
+    if (result) {
       return res
         .status(201)
-        .json(
-          successResponse("Image uploaded successfully !", result.dataValues)
-        );
+        .json(successResponse("Image uploaded successfully !", result));
     }
   } catch (err) {
     next(err);
@@ -65,7 +62,7 @@ exports.createProduct = async (req, res, next) => {
     if (result) {
       return res
         .status(201)
-        .json(successResponse("Product added successfully !", result));
+        .json(successResponse("Product added successfully !", data));
     }
   } catch (err) {
     next(err);
@@ -73,7 +70,27 @@ exports.createProduct = async (req, res, next) => {
 };
 exports.getProducts = async (req, res, next) => {
   try {
-    const Products = await Product.findAll();
+    const Products = await Product.findAll({
+      attributes: [
+        "product_Id",
+        "productName",
+        "productPrice",
+        "productDescription",
+        "inStock",
+      ],
+      include: [
+        {
+          model: Category,
+          attributes: ["category_Id", "categoryName"],
+          include: [
+            {
+              model: Image,
+              attributes: ["imageID", "imgURL"],
+            },
+          ],
+        },
+      ],
+    });
     if (Products) {
       return res
         .status(200)
@@ -87,6 +104,10 @@ exports.uploadProductDocument = async (req, res, next) => {
   try {
     const docs = await req.files;
     const product_Id = await req.body.product_Id;
+    const product = await Product.findOne({ where: { product_Id } });
+    if (!product) {
+      return res.status(404).json(failerResponse("Product not found !"));
+    }
     const results = [];
     for (let i = 0; i < docs.length; i++) {
       const docName = docs[i].filename;
@@ -118,7 +139,18 @@ exports.uploadProductDocument = async (req, res, next) => {
 exports.deleteProduct = async (req, res, next) => {
   try {
     const product_Id = await req.params.id;
-    const productExist = await Product.findOne({ where: { product_Id } });
+    const productExist = await Product.findOne({
+      where: { product_Id },
+      attributes: [
+        "product_Id",
+        "productName",
+        "productPrice",
+        "productDescription",
+        "inStock",
+        "category_Id",
+        "imageID",
+      ],
+    });
     if (!productExist) {
       return res.status(404).json(failerResponse("Product not found !"));
     }
@@ -135,7 +167,18 @@ exports.deleteProduct = async (req, res, next) => {
 exports.getSingleProduct = async (req, res, next) => {
   try {
     const product_Id = await req.params.id;
-    const product = await Product.findOne({ where: { product_Id } });
+    const product = await Product.findOne({
+      where: { product_Id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "deletedAt"],
+      },
+      include: [
+        {
+          model: Documents,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+      ],
+    });
     if (!product) {
       return res.status(404).json(failerResponse("Product not found !"));
     } else {

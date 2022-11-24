@@ -10,13 +10,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Categories.hasMany(models.Products, {
         foreignKey: "category_Id",
-        onDelete: "cascade",
+        onDelete: "set null",
         onUpdate: "cascade",
       });
       Categories.belongsTo(models.Images, {
         foreignKey: "imageID",
-        onDelete: "set null",
-        onUpdate: "cascade",
+        // onDelete: "set null",
+        // onUpdate: "cascade",
       });
     }
   }

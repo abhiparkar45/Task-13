@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Images extends Model {
     /**
@@ -11,29 +9,40 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Images.hasOne(models.Products,{foreignKey:'imageID',onDelete:'set null',onUpdate:'cascade'});
-      Images.hasOne(models.Categories,{foreignKey:'imageID',onDelete:'set null',onUpdate:'cascade'});
-      }
-  }
-  Images.init({
-    imageID:{
-      primaryKey:true,
-      type:DataTypes.INTEGER,
-      allowNull:false,
-      autoIncrement:true
-    },
-    imgName:{
-      type: DataTypes.STRING,
-      allowNull:false
-    },
-    imgURL: {
-      type:DataTypes.STRING,
-      allowNull:false
+      Images.hasOne(models.Products, {
+        foreignKey: "imageID",
+        onDelete: "set null",
+        onUpdate: "cascade",
+      });
+      Images.hasOne(models.Categories, {
+        foreignKey: "imageID",
+        onDelete: "set null",
+        onUpdate: "cascade",
+      });
     }
-  }, {
-    sequelize,
-    modelName: 'Images',
-    tableName: 'ec_images'
-  });
+  }
+  Images.init(
+    {
+      imageID: {
+        primaryKey: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+      },
+      imgName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      imgURL: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: "Images",
+      tableName: "ec_images",
+    }
+  );
   return Images;
 };

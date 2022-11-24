@@ -32,7 +32,15 @@ exports.createCategory = async (req, res, next) => {
 };
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.findAll();
+    const categories = await Category.findAll({
+      attributes: ["category_Id", "categoryName"],
+      include: [
+        {
+          model: Image,
+          attributes: ["imgURL"],
+        },
+      ],
+    });
     return res.status(200).json(categories);
   } catch (err) {
     next(err);
@@ -41,19 +49,16 @@ exports.getCategories = async (req, res, next) => {
 exports.uploadCategoryImage = async (req, res, next) => {
   try {
     const imgName = await req.file.filename;
-    const path = await req.file.path;
-    const imgURL = `http://ecommerce.com/uploads/${path}`;
+    const imgURL = `${process.env.BASE_URL}/${imgName}`;
     const data = {
       imgName: imgName,
       imgURL: imgURL,
     };
     const result = await Image.create(data);
-    if (result.dataValues) {
+    if (result) {
       return res
         .status(201)
-        .json(
-          successResponse("Image uploaded successfully !", result.dataValues)
-        );
+        .json(successResponse("Image uploaded successfully !", result));
     }
   } catch (err) {
     next(err);
@@ -67,8 +72,10 @@ exports.getCategory = async (req, res, next) => {
       include: [
         {
           model: Image,
+          attributes: ["imgURL"],
         },
       ],
+      attributes: ["category_Id", "categoryName"],
     });
     if (!category) {
       return res.status(404).json(failerResponse("Category not found !"));
@@ -85,6 +92,7 @@ exports.deleteCategory = async (req, res, next) => {
   try {
     const category = await Category.findOne({
       where: { category_Id: req.params.id },
+      attributes: ["category_Id", "categoryName", "imageID"],
     });
     if (!category) {
       return res.status(404).json(failerResponse("Category Not Found !"));
@@ -98,6 +106,7 @@ exports.deleteCategory = async (req, res, next) => {
         .json(successResponse("Category deleted successfully !", category));
     }
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
